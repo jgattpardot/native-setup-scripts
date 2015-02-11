@@ -1,0 +1,21 @@
+#!/bin/bash
+number=$1
+if [[ -z "$number" ]]; then
+	echo "Usage: $0 <branch>"
+	exit 1
+fi
+
+branch="jsg/pdt-$number"
+
+cd ~/repos/pardot
+stuff=`git branch`
+
+for line in $stuff; do
+	if [[ "$line" == "$branch" ]]; then
+		git checkout $branch
+		exit 0
+	fi
+done
+
+echo "No such branch $branch"
+exit 1

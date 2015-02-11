@@ -1,0 +1,11 @@
+#!/bin/bash
+
+pid=$(ps aux | grep -v grep | grep org.apache.cassandra.service.CassandraDaemon | awk '{print $2}')
+if [[ ! -z $pid ]]; then
+	echo "Cassandra is running with pid $pid"
+else
+	echo "Cassandra is NOT running"
+	exit 1
+fi
+
+exit 0

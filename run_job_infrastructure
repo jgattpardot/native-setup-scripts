@@ -1,0 +1,52 @@
+#!/bin/bash
+
+~/bin/stop_job_infrastructure
+
+function killthing()
+{
+	thing=$1
+	pid=$(ps aux | grep -v grep | grep "$thing" | awk '{print $2}')
+	if [[ "$pid" != "" ]]; then
+		echo "Killing pid of $thing ... pid $pid"
+		kill $pid
+	fi
+}
+
+sleep 2
+
+cd ~/repos/pardot
+
+echo "Running job-monitor to setup initial data"
+
+./symfony job-monitor &
+
+echo "Sleeping for 2 seconds..."
+
+sleep 2
+
+killthing "symfony job-monitor"
+
+echo "Calling job-populate"
+
+./symfony job-populate
+
+sleep 5
+
+echo "Running job-monitor for real"
+
+./symfony job-monitor --ignore-resources &
+
+sleep 5
+
+echo "Running job-node"
+
+./symfony job-node &
+
+sleep 5
+
+echo "Running job-manager"
+
+./symfony job-manager &
+
+echo "Done!"
+

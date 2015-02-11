@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ~/repos/pardot
+sed -i '' "s/rhombus.client.enabled: false/rhombus.client.enabled: true/" config/services/dev/rhombus/client.yml
+git update-index --assume-unchanged config/services/dev/rhombus/client.yml
+~/bin/resane

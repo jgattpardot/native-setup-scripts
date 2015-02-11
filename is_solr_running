@@ -1,0 +1,12 @@
+#!/bin/bash
+
+pid=$(ps aux | grep -v grep | grep java | grep start.jar | awk '{print $2}')
+
+if [[ ! -z $pid ]]; then
+	echo "Solr is running with pid $pid"
+else
+	echo "Solr is NOT running"
+	exit 1
+fi
+
+exit 0

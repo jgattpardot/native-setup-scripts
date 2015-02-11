@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+pids=$(ps aux | grep java | grep start.jar | awk '{print $2}')
+
+for pid in $pids; do
+	echo "Killing solr running with pid $pid"
+	kill $pid
+done
+

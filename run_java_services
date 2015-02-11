@@ -1,0 +1,38 @@
+#!/bin/bash
+# This program resets the local java-services
+# In ensures that a local rhombus is also enabled (rhombuson)
+
+~/bin/rhombuson
+
+cd ~/repos/java-services
+git pull >/dev/null 2>&1
+echo "Building java-services";
+mvn clean package >/dev/null 2>&1
+
+if [[ $? -ne 0 ]]; then
+	echo "Build failed"
+	exit 2
+fi
+
+cd target
+
+ln -s pardot-java-services-*.jar pardot-java-services.jar 2>/dev/null
+if [[ $? -ne 0 ]]; then
+	echo "Failed to create pardot-java-services.jar symlink"
+	exit 1
+fi
+cd ..
+
+~/bin/stop_java_services
+
+echo "Starting java-services";
+(java -jar target/pardot-java-services.jar server target/classes/service-dev.js) &
+
+sleep 3
+
+rebuild_cassandra_keyspace
+
+sleep 2
+echo ""
+echo "All done!"
+

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function killthing()
+{
+	thing=$1
+	pids=$(ps aux | grep -v grep | grep "$thing" | awk '{print $2}')
+	for pid in $pids; do
+		if [[ "$pid" != "" ]]; then
+			echo "Killing pid of $thing ... pid $pid"
+			kill $pid
+		fi
+	done
+}
+
+for i in "symfony job-monitor" "symfony job-node" "symfony job-manager" "symfony job-exec"; do
+	killthing "$i"
+done

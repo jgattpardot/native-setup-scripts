@@ -1,0 +1,16 @@
+#!/bin/bash
+
+rc=0
+
+for thing in "symfony job-monitor" "symfony job-node" "symfony job-manager"; do
+	pid=$(ps aux | grep -v grep | grep "$thing" | awk '{print $2}')
+	newthing=${thing##symfony }
+	if [[ "$pid" != "" ]]; then
+		echo "$newthing is running with pid $pid"
+	else
+		echo "$newthing is NOT running"
+		rc=1
+	fi
+done
+
+exit $rc

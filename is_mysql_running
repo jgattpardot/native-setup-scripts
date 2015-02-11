@@ -1,0 +1,12 @@
+#!/bin/bash
+
+mysql_pid=$(ps aux | grep -v grep | grep mysqld | grep -v mysqld_safe | awk '{print $2}')
+
+if [[ ! -z $mysql_pid ]]; then
+	echo "MySQL is running with pid $mysql_pid"
+else
+	echo "MySQL is NOT running"
+	exit 1
+fi
+
+exit 0

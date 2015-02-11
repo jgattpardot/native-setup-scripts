@@ -1,0 +1,12 @@
+#!/bin/bash
+
+java_pid=$(ps aux | grep -v grep | grep java | grep pardot-java-services | awk '{print $2}')
+
+if [[ ! -z $java_pid ]]; then
+	echo "Java Services is running with pid $java_pid"
+else
+	echo "Java Services is NOT running"
+	exit 1
+fi
+
+exit 0

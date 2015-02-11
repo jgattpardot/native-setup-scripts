@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Restarting job infrastructure..."
+run_job_infrastructure
+echo "Restarting Java Services..."
+run_java_services
+echo "Restarting Solr..."
+run_solr

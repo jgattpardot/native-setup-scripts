@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd ~/repos/pardot
+./symfony cc >/dev/null
+git checkout -- cache data
+git checkout -- lib/model/doctrine/shard/generated
+chmod 777 log cache
+chmod 777 log/dev_jobs

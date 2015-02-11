@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Rebuilding cassandra keyspace";
+curl -i -H "Content-Type: application/json" http://localhost:3001/rhombus-schema/v1/build-default-keyspace/true

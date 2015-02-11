@@ -1,0 +1,20 @@
+#!/bin/bash
+
+is_solr_running || echo "Solr is not running"
+
+sql_file=audit-triggers.sql
+real_sql_file=real-audit-triggers.sql
+
+cd ~/repos/pardot
+echo "Generating triggers"
+./symfony generate-audit-triggers $sql_file
+
+echo "Un-slaving sql file";
+tail -n+3 $sql_file | sed '$d' | sed '$d' > $real_sql_file
+
+echo "Creating triggers in mysql"
+mysql -u root pardot_shard1 < $real_sql_file
+
+rm -f $sql_file $real_sql_file
+
+echo "You may want to run ./symfony fixture-visitor at this time"

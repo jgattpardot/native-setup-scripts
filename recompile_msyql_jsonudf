@@ -1,0 +1,52 @@
+#!/bin/bash
+
+sudo ls /tmp >/dev/null
+rc=$?
+if [[ $rc -ne 0 ]]; then
+	echo "You must be sudo"
+	exit 1
+fi
+
+is_mysql_running
+if [[ $? -ne 0 ]]; then
+	echo "MySQL must be running"
+	exit 1
+fi
+
+
+cd ~/repos/docs/config/jsonUdf
+
+# This section depends on which version (aka, where) percona-server is installed on your system.
+# Yours could be installed at /usr/local/Cellar/percona-server/5.6.20-68.0, for instance.
+# Modify $percona_dir (below) accordingly.  You'll know you have it wrong if the gcc command
+# gives you "lib_mysqludf_json.c:40:10: fatal error: 'my_global.h' file not found" as output.
+
+percona_dir=/usr/local/Cellar/percona-server/5.6.20-68.0 
+
+
+if [[ ! -f ./lib_mysqludf_json.so ]]; then
+	gcc -Wall -I/usr/include/mysql -I. -I$percona_dir -shared lib_mysqludf_json.c -o lib_mysqludf_json.so -fPIC
+	rc=$?
+	if [[ $rc -ne 0 ]]; then
+		echo "Compilation failed";
+		exit 1;
+	fi
+fi
+sudo cp lib_mysqludf_json.so /usr/lib
+sudo mkdir -p /usr/lib64/mysql/plugin
+sudo cp lib_mysqludf_json.so /usr/lib64/mysql/plugin/
+sudo cp /usr/lib/lib_mysqludf_json.so $percona_dir/lib/mysql/plugin/lib_mysqludf_json.so
+
+mysql -u root <<EOF
+DROP FUNCTION IF EXISTS lib_mysqludf_json_info;
+DROP FUNCTION IF EXISTS json_array;
+DROP FUNCTION IF EXISTS json_members;
+DROP FUNCTION IF EXISTS json_object;
+DROP FUNCTION IF EXISTS json_values;
+
+CREATE FUNCTION lib_mysqludf_json_info returns string soname 'lib_mysqludf_json.so';
+CREATE FUNCTION json_array returns string soname 'lib_mysqludf_json.so';
+CREATE FUNCTION json_members returns string soname 'lib_mysqludf_json.so';
+CREATE FUNCTION json_object returns string soname 'lib_mysqludf_json.so';
+CREATE FUNCTION json_values returns string soname 'lib_mysqludf_json.so';
+EOF

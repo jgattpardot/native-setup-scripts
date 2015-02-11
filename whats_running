@@ -1,0 +1,55 @@
+#!/bin/bash
+
+all_running=0
+
+echo " ===== managed services "
+
+echo ''
+
+echo " - Java Services "
+
+is_java_services_running
+if [[ $? -eq 1 ]]; then
+	all_running=0
+fi
+
+echo ""
+
+
+
+echo " - Job Infrastructure "
+is_job_infrastructure_running
+if [[ $? -eq 1 ]]; then
+	all_running=0
+fi
+
+echo ""
+
+echo " - Solr "
+is_solr_running
+if [[ $? -eq 1 ]]; then
+	all_running=0
+fi
+
+
+echo ''
+
+echo " ===== non-managed services "
+
+echo ''
+
+echo " - Cassandra "
+is_cassandra_running
+echo ''
+
+echo " - MySQL "
+is_mysql_running
+echo ''
+
+# We don't check the rc of non-managed sevices
+
+if [[ $all_running -eq 0 ]]; then
+	exit 1
+fi
+
+exit 0

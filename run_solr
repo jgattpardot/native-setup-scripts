@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+~/bin/stop_solr
+cd /usr/local/solr
+./startSolr.sh &
