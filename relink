@@ -1,0 +1,22 @@
+#!/bin/bash
+
+this_dir=$(pwd)
+
+files=$(ls | grep -v relink)
+for filename in $files; do
+	file=$this_dir/$filename
+	target=~/bin/$filename
+	save=~/bin/saved-$filename
+	if [[ -f $target && ! -h $target ]]; then
+		mv $target $save
+		echo "Renamed $target to $save"
+	fi
+
+	if [[ -h $target ]]; then
+		echo "$file is already symlinked"
+	else
+		ln -s $file $target
+		echo "symlinked $file to $target"
+	fi
+done
+
